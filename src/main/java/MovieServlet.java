@@ -1,5 +1,7 @@
 import com.google.gson.Gson;
+import data.DaoFactory;
 import data.Movie;
+import data.MoviesDao;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 @WebServlet(name = "MovieServlet", urlPatterns ="/movies")
 public class MovieServlet extends HttpServlet {
@@ -19,13 +22,18 @@ public class MovieServlet extends HttpServlet {
 
         try {
             PrintWriter out = response.getWriter();
+
             // eventually get movies from the database
-            Movie movie = new Movie(2, "Moonrise Kingdom","2012","Wes Anderson","Bill Murray","100","No Poster","Comedy","Kids go on an adventure");
+//            Movie movie = new Movie(2, "Moonrise Kingdom","2012","Wes Anderson","Bill Murray","100","No Poster","Comedy","Kids go on an adventure");
+
+            // We are letting the "DaoFactory" do the work
+            MoviesDao moviesDao = DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY);
 
             // turn into a Json string
-            String movieString = new Gson().toJson(movie);
+            String moviesString = new Gson().toJson(moviesDao.all());
+
             // inject into response
-            out.println(movieString);
+            out.println(moviesString);
 
         }catch(Exception ex){
             System.out.println(ex.getMessage());
@@ -38,14 +46,13 @@ public class MovieServlet extends HttpServlet {
 
         PrintWriter out = null;
     try{
-
         out = response.getWriter();
-
         // get the stream of characters from the request (eventually becomes our movie)
         BufferedReader reader = request.getReader();
 
         // turns that stream into an array of Movies
     Movie[] movies = new Gson().fromJson(reader, Movie[].class);
+    DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY).insertAll(movies);
 
     // sout out properties of each movie
     for (Movie movie : movies){
@@ -54,10 +61,13 @@ public class MovieServlet extends HttpServlet {
         System.out.println(movie.getDirector());
     }
 
-    }catch(Exception ex){
-        System.out.println(ex.getMessage());
-    }
+    }catch(SQLException | IOException e) {
+        out.println(new Gson().toJson(e.getLocalizedMessage()));
+        response.setStatus(500);
+        e.printStackTrace();
+        return;
 
+    }
     // write a response body and set the status code to 200.
     out.println(new Gson().toJson("{message: \" Movies POST was successful\"}"));
     response.setStatus(200);
@@ -110,6 +120,7 @@ public class MovieServlet extends HttpServlet {
         }catch(Exception ex){
             System.out.println(ex.getMessage());
         }
+
 
         out.println(new Gson().toJson("{message: \" Movies DELETE was successful\"}"));
         response.setStatus(200);

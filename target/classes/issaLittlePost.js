@@ -1,3 +1,5 @@
+// fetch for GET, POST and PUT method.
+
 fetch("http://localhost:8080/movies", {
     method: 'POST',
     headers: {
@@ -11,3 +13,17 @@ fetch("http://localhost:8080/movies", {
     console.log(data);
 });
 
+// fetch for DELETE method. Gets the ID and deletes.
+
+fetch("http://localhost:8080/movies", {
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    redirect: 'follow',
+    body: JSON.stringify(2)
+}).then(function(response) {
+    return response.json();
+}).then(function(data) {
+    console.log(data);
+});
