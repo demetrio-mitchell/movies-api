@@ -67,8 +67,11 @@ public class InMemoryMoviesDao implements MoviesDao {
 
     private HashMap<Integer, Movie> getMovieMap(List<Movie> movies) {
         HashMap<Integer, Movie> movieHashMap = new HashMap<>();
+        int counter = 1;
         for (Movie movie : movies) {
-            movieHashMap.put(movie.getId(), movie);
+            movieHashMap.put(counter, movie);
+            movie.setId(counter);
+            counter++;
         }
         return movieHashMap;
     }

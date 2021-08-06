@@ -31,7 +31,7 @@ public class MovieServlet extends HttpServlet {
 
             MoviesDao moviesdao = DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY);
 
-           //turn into a json string
+            //turn into a json string
             String movieString = new Gson().toJson(moviesdao.all());
 
             //inject into response
@@ -42,7 +42,7 @@ public class MovieServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost (HttpServletRequest request, HttpServletResponse response){
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 
         response.setContentType("application/json");
 
@@ -56,7 +56,7 @@ public class MovieServlet extends HttpServlet {
             Movie[] movies = new Gson().fromJson(reader, Movie[].class);
 
             // sout out each piece of the movie so we know the objects made it
-            for (Movie movie : movies){
+            for (Movie movie : movies) {
                 System.out.println(movie.getId());
                 System.out.println(movie.getTitle());
                 System.out.println(movie.getYear());
@@ -64,10 +64,10 @@ public class MovieServlet extends HttpServlet {
                 System.out.println(movie.getPlot());
                 System.out.println("==========================");
 
-                DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY).insertAll(movies);
+                DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY).insert(movies[0]);
             }
 
-        }catch (SQLException | IOException e){
+        } catch (IOException e) {
             out.println(new Gson().toJson(e.getLocalizedMessage()));
             response.setStatus(500);
             e.printStackTrace();
@@ -81,30 +81,10 @@ public class MovieServlet extends HttpServlet {
     }
 
 
-    protected void doPut (HttpServletRequest request, HttpServletResponse response){
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("application/json");
 
         PrintWriter out = null;
-
-        try {
-            out = response.getWriter();
-
-            BufferedReader reader = request.getReader();
-
-            Movie[] movies = new Gson().fromJson(reader, Movie[].class);
-
-            for (Movie movie : movies){
-                System.out.println(movie.getId());
-                System.out.println(movie.getTitle());
-                System.out.println(movie.getYear());
-                System.out.println(movie.getRating());
-                System.out.println(movie.getPlot());
-                System.out.println("==========================");
-            }
-
-        }catch (Exception ex){
-            System.out.println(ex.getMessage());
-        }
 
         try {
             Movie movie = new Gson().fromJson(request.getReader(), Movie.class);
@@ -121,27 +101,54 @@ public class MovieServlet extends HttpServlet {
             return;
         }
 
-        out.println(new Gson().toJson("{message: \"Movies PUT was successful\"}"));
+        out.println(new Gson().toJson("{message: \"Movie UPDATE was successful\"}"));
         response.setStatus(200);
+
+
+//        try {
+//            out = response.getWriter();
+//
+//            BufferedReader reader = request.getReader();
+//
+//            Movie[] movies = new Gson().fromJson(reader, Movie[].class);
+//
+//            for (Movie movie : movies) {
+//                System.out.println(movie.getId());
+//                System.out.println(movie.getTitle());
+//                System.out.println(movie.getYear());
+//                System.out.println(movie.getRating());
+//                System.out.println(movie.getPlot());
+//                System.out.println("==========================");
+//            }
+//
+//        } catch (Exception ex) {
+//            System.out.println(ex.getMessage());
+//        }
+//
+//        try {
+//            Movie movie = new Gson().fromJson(request.getReader(), Movie.class);
+//            DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY).update(movie);
+//        } catch (SQLException e) {
+//            out.println(new Gson().toJson(e.getLocalizedMessage()));
+//            response.setStatus(500);
+//            e.printStackTrace();
+//            return;
+//        } catch (Exception e) {
+//            out.println(new Gson().toJson(e.getLocalizedMessage()));
+//            response.setStatus(400);
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        out.println(new Gson().toJson("{message: \"Movies PUT was successful\"}"));
+//        response.setStatus(200);
     }
 
     @Override
-    protected void doDelete (HttpServletRequest request, HttpServletResponse response) {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("application/json");
 
         PrintWriter out = null;
-
-        try {
-            out = response.getWriter();
-
-            BufferedReader reader = request.getReader();
-
-            int id = new Gson().fromJson(reader, int.class);
-
-            System.out.println("id: " + id + " has been deleted");
-        } catch (Exception ex){
-            System.out.println(ex.getMessage());
-        }
 
         try {
             var id = new Gson().fromJson(request.getReader(), int.class);
@@ -153,7 +160,31 @@ public class MovieServlet extends HttpServlet {
             return;
         }
 
-        out.println(new Gson().toJson("{message: \"Movies DELETE was successful\"}"));
-        response.setStatus(200);
+        out.println(new Gson().toJson("{message: \"Movie DELETE was successful\"}"));
+
+//        try {
+//            out = response.getWriter();
+//
+//            BufferedReader reader = request.getReader();
+//
+//            int id = new Gson().fromJson(reader, int.class);
+//
+//            System.out.println("id: " + id + " has been deleted");
+//        } catch (Exception ex) {
+//            System.out.println(ex.getMessage());
+//        }
+//
+//        try {
+//            var id = new Gson().fromJson(request.getReader(), int.class);
+//            DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY).destroy(id);
+//        } catch (SQLException | IOException e) {
+//            out.println(new Gson().toJson(e.getLocalizedMessage()));
+//            response.setStatus(500);
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        out.println(new Gson().toJson("{message: \"Movies DELETE was successful\"}"));
+//        response.setStatus(200);
     }
 }
