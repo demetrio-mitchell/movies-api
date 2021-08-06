@@ -81,10 +81,10 @@ public class MovieServlet extends HttpServlet {
     }
 
 
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
 
-        PrintWriter out = null;
+        PrintWriter out = response.getWriter();
 
         try {
             Movie movie = new Gson().fromJson(request.getReader(), Movie.class);
@@ -145,10 +145,10 @@ public class MovieServlet extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
 
-        PrintWriter out = null;
+        PrintWriter out = response.getWriter();
 
         try {
             var id = new Gson().fromJson(request.getReader(), int.class);
