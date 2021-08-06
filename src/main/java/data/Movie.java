@@ -10,11 +10,12 @@ public class Movie {
     private String poster;
     private String genre;
     private String plot;
+    private String rating;
 
     public Movie(){
     }
 
-    public Movie(int id, String title, String year, String director, String actors, String imdbID, String poster, String genre, String plot) {
+    public Movie(int id, String title, String year, String director, String actors, String imdbID, String poster, String genre, String plot, String rating) {
         this.id = id;
         this.title = title;
         this.year = year;
@@ -24,6 +25,7 @@ public class Movie {
         this.poster = poster;
         this.genre = genre;
         this.plot = plot;
+        this.rating = rating;
     }
 
     public int getId() {
@@ -96,5 +98,13 @@ public class Movie {
 
     public void setPlot(String plot) {
         this.plot = plot;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
     }
 }
