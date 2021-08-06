@@ -44,7 +44,7 @@ public class MySqlMoviesDao implements MoviesDao{
 
         // Build sql template
         StringBuilder sql = new StringBuilder("INSERT INTO movies (" +
-                "id, title, year, rating, plot) " +
+                "title, year, rating, plot, id) " +
                 "VALUES ");
 
 
@@ -62,11 +62,11 @@ public class MySqlMoviesDao implements MoviesDao{
         // You could use a for loop to do this as well and use its incrementor
         int counter = 0;
         for (Movie movie : movies) {
-            statement.setInt((counter * 5) + 1, movie.getId());
-            statement.setString((counter * 5) + 2, movie.getTitle());
-            statement.setString((counter * 5) + 3, movie.getYear());
-            statement.setString((counter * 5) + 4, movie.getRating());
-            statement.setString((counter * 5) + 5, movie.getPlot());
+            statement.setString((counter * 5) + 1, movie.getTitle());
+            statement.setString((counter * 5) + 2, movie.getYear());
+            statement.setString((counter * 5) + 3, movie.getRating());
+            statement.setString((counter * 5) + 4, movie.getPlot());
+            statement.setInt((counter * 5) + 5, movie.getId());
             counter++;
         }
         statement.executeUpdate();
