@@ -2,11 +2,11 @@ package data;
 
 public class Movie {
 
-    private int id;
     private String title;
     private String year;
     private String rating;
     private String plot;
+    private int id;
 
 
     public Movie() {}

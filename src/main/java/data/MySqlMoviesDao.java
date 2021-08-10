@@ -27,6 +27,7 @@ public class MySqlMoviesDao implements MoviesDao{
 
     @Override
     public List<Movie> all() throws SQLException {
+
         Statement statement = connection.createStatement();
 
         ResultSet rs = statement.executeQuery("SELECT * FROM movies");
@@ -91,14 +92,11 @@ public class MySqlMoviesDao implements MoviesDao{
 
     @Override
     public void update(Movie movie) throws SQLException {
-        String sql = "UPDATE movies" +
-                "SET title = ?" +
-                "SET year = ?" +
-                "SET rating = ?" +
-                "SET plot = ?" +
+        String sql = "UPDATE movies " +
+                "SET title = ?, year = ?, rating = ?, plot = ? " +
                 "WHERE id = ?";
 
-        PreparedStatement statement = connection.prepareStatement(sql.toString());
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, movie.getTitle());
         statement.setString(2, movie.getYear());
@@ -106,7 +104,7 @@ public class MySqlMoviesDao implements MoviesDao{
         statement.setString(4, movie.getPlot());
         statement.setInt(5, movie.getId());
 
-        statement.execute();
+        statement.executeUpdate();
 
     }
 
@@ -115,7 +113,7 @@ public class MySqlMoviesDao implements MoviesDao{
         String sql = "DELETE FROM movies " +
                 "WHERE id = ?";
 
-        PreparedStatement statement = connection.prepareStatement(sql.toString());
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setInt(1, id);
 
