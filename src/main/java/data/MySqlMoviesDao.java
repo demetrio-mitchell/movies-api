@@ -3,10 +3,8 @@ package data;
 import com.mysql.cj.jdbc.Driver;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,7 +31,24 @@ private Connection connection = null;
 
     @Override
     public List<Movie> all() throws SQLException {
-        return null;
+
+        Statement statement = connection.createStatement();
+
+        ResultSet rs = statement.executeQuery("SELECT * FROM movies");
+
+        List<Movie> movies = new ArrayList<>();
+
+        while (rs.next()) {
+            movies.add(new Movie(
+                    rs.getString("title"),
+                    rs.getString("year"),
+                    rs.getString("rating"),
+                    rs.getString("plot"),
+                    rs.getInt("id")
+            ));
+        }
+
+        return movies;
     }
 
     @Override
@@ -43,6 +58,9 @@ private Connection connection = null;
 
     @Override
     public void insert(Movie movie) {
+
+
+
 
     }
 
@@ -84,10 +102,34 @@ private Connection connection = null;
     @Override
     public void update(Movie movie) throws SQLException {
 
+        String sql = "UPDATE movies " +
+                     "SET title = ?" +
+                     "SET year = ?" +
+                     "SET rating = ?" +
+                     "SET plot = ?" +
+                     "WHERE id = ?";
+
+        PreparedStatement statement = connection.prepareStatement(sql.toString());
+
+        statement.setString( 1, movie.getTitle());
+        statement.setString( 2, movie.getYear());
+        statement.setString(3, movie.getRating());
+        statement.setString( 4, movie.getPlot());
+        statement.setInt(5, movie.getId());
+
+        statement.execute();
+
     }
 
     @Override
     public void destroy(int id) throws SQLException {
 
+        String sql = "DELETE FROM movies " + "WHERE id = ?";
+
+        PreparedStatement statement = connection.prepareStatement(sql.toString());
+
+        statement.setInt(1, id);
+
+        statement.execute();
     }
 }

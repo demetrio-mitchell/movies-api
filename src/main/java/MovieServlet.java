@@ -26,7 +26,7 @@ public class MovieServlet extends HttpServlet {
 //            Movie movie = new Movie(2, "Moonrise Kingdom","2012","Wes Anderson","Bill Murray","100","No Poster","Comedy","Kids go on an adventure");
 
             // We are letting the "DaoFactory" do the work
-            MoviesDao moviesDao = DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY);
+            MoviesDao moviesDao = DaoFactory.getMoviesDao(DaoFactory.ImplType.MYSQL);
 
             // turn into a Json string
             String moviesString = new Gson().toJson(moviesDao.all());
@@ -51,13 +51,14 @@ public class MovieServlet extends HttpServlet {
 
             // turns that stream into an array of Movies
             Movie[] movies = new Gson().fromJson(reader, Movie[].class);
-            DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY).insert(movies[0]);
+            DaoFactory.getMoviesDao(DaoFactory.ImplType.MYSQL).insert(movies[0]);
 
             // sout out properties of each movie
             for (Movie movie : movies) {
                 System.out.println(movie.getId());
                 System.out.println(movie.getTitle());
-                System.out.println(movie.getDirector());
+                System.out.println(movie.getPlot());
+                System.out.println(movie.getRating());
             }
 
         } catch (IOException ex) {
@@ -83,7 +84,7 @@ public class MovieServlet extends HttpServlet {
             out = response.getWriter();
 
             Movie movie = new Gson().fromJson(request.getReader(), Movie.class);
-            DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY).update(movie);
+            DaoFactory.getMoviesDao(DaoFactory.ImplType.MYSQL).update(movie);
         } catch (SQLException e) {
             out.println(new Gson().toJson(e.getLocalizedMessage()));
             response.setStatus(500);
@@ -112,7 +113,7 @@ public class MovieServlet extends HttpServlet {
             out = response.getWriter();
 
             var id = new Gson().fromJson(request.getReader(), int.class);
-            DaoFactory.getMoviesDao(DaoFactory.ImplType.IN_MEMORY).destroy(id);
+            DaoFactory.getMoviesDao(DaoFactory.ImplType.MYSQL).destroy(id);
         } catch (SQLException | IOException e) {
             out.println(new Gson().toJson(e.getLocalizedMessage()));
             response.setStatus(500);
