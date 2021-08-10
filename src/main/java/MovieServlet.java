@@ -40,38 +40,25 @@ public class MovieServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        Movie[] movies = new Gson().fromJson(request.getReader(), Movie[].class);
         response.setContentType("application/json");
 
-        PrintWriter out = null;
+        PrintWriter out = response.getWriter();
         try {
-            out = response.getWriter();
-            // get the stream of characters from the request (eventually becomes our movie)
-            BufferedReader reader = request.getReader();
-
-            // turns that stream into an array of Movies
-            Movie[] movies = new Gson().fromJson(reader, Movie[].class);
-            DaoFactory.getMoviesDao(DaoFactory.ImplType.MYSQL).insert(movies[0]);
-
-            // sout out properties of each movie
-            for (Movie movie : movies) {
-                System.out.println(movie.getId());
-                System.out.println(movie.getTitle());
-                System.out.println(movie.getPlot());
-                System.out.println(movie.getRating());
-            }
-
-        } catch (IOException ex) {
-            out.println(new Gson().toJson(ex.getLocalizedMessage()));
+            DaoFactory.getMoviesDao(DaoFactory.ImplType.MYSQL).insertAll(movies);
+        } catch (SQLException e) {
+            out.println(new Gson().toJson(e.getLocalizedMessage()));
             response.setStatus(500);
-            ex.printStackTrace();
+            e.printStackTrace();
             return;
-
         }
-        // write a response body and set the status code to 200.
-        out.println(new Gson().toJson("{message: \" Movies POST was successful\"}"));
-        response.setStatus(200);
 
+
+        // write meaningful responses and set the response to 200
+        out.println(new Gson().toJson("{message: \"Movies POST was successful\"}"));
+        response.setStatus(200);
     }
 
     @Override
