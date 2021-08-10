@@ -22,12 +22,6 @@ public class MovieServlet extends HttpServlet {
         try {
             //get
             PrintWriter out = response.getWriter();
-            // Eventually get movies form the database
-
-//            Movie movie = new Movie(2, "Tenet", "2021", "5", "Armed with only one word, Tenet," +
-//                    " and fighting for the survival of the entire world, a Protagonist journeys\n" +
-//                    "through a twilight world of international espionage on a mission that will unfold in something
-//                    beyond real time.");
 
             MoviesDao moviesdao = DaoFactory.getMoviesDao(DaoFactory.ImplType.MYSQL);
 
@@ -42,32 +36,15 @@ public class MovieServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        Movie[] movies = new Gson().fromJson(request.getReader(), Movie[].class);
         response.setContentType("application/json");
 
-        PrintWriter out = null;
+        PrintWriter out = response.getWriter();
         try {
-            out = response.getWriter();
-            // get the stream of characters from the request (eventually becomes our movie)
-            BufferedReader reader = request.getReader();
-
-            // turns stream into array of movies
-            Movie[] movies = new Gson().fromJson(reader, Movie[].class);
-
-            // sout out each piece of the movie so we know the objects made it
-            for (Movie movie : movies) {
-                System.out.println(movie.getId());
-                System.out.println(movie.getTitle());
-                System.out.println(movie.getYear());
-                System.out.println(movie.getRating());
-                System.out.println(movie.getPlot());
-                System.out.println("==========================");
-
-                DaoFactory.getMoviesDao(DaoFactory.ImplType.MYSQL).insert(movies[0]);
-            }
-
-        } catch (IOException e) {
+                DaoFactory.getMoviesDao(DaoFactory.ImplType.MYSQL).insertAll(movies);
+            } catch (SQLException e) {
             out.println(new Gson().toJson(e.getLocalizedMessage()));
             response.setStatus(500);
             e.printStackTrace();
